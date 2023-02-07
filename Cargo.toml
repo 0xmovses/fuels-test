@@ -1,0 +1,18 @@
+[package]
+name = "initial"
+description = "A cargo-generate template for Rust + Sway integration testing."
+version = "0.1.0"
+edition = "2021"
+authors = ["rvm <r.v.melkonian@gmail.com>"]
+license = "Apache-2.0"
+
+[dependencies]
+tokio = { version = "1.25", features = ["full"] }
+fuels = { version = "0.35.1", features = ["fuel-core-lib"] }
+
+[dev-dependencies]
+fuels = { version = "0.35.1", features = ["fuel-core-lib"] }
+
+[[test]]
+name = "fuels_test"
+path = "tests/fuels.rs"
