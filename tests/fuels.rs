@@ -1,6 +1,6 @@
 use fuels::{
     client::FuelClient, fuel_node::FuelService, prelude::*, signers::fuel_crypto::SecretKey,
-    types::error,
+    types::coin::Coin,
 };
 use std::str::FromStr;
 
@@ -24,6 +24,24 @@ async fn run_baby_node() -> FuelClient {
     client
 }
 
+async fn run_query() -> Result<Vec<Coin>> {
+    let wallet = WalletUnlocked::new_random(None);
+
+    let number_of_coins = 1;
+    let amount_per_coin = 3;
+
+    let coins = setup_single_asset_coins(
+        wallet.address(),
+        BASE_ASSET_ID,
+        number_of_coins,
+        amount_per_coin,
+    );
+
+    let (provider, _) = setup_test_provider(coins.clone(), vec![], None, None).await;
+    let coins = provider.get_coins(wallet.address(), BASE_ASSET_ID).await?;
+    Ok(coins)
+}
+
 #[tokio::test]
 async fn can_unlock_wallet() {
     let unlocked = unlock_wallet().await;
@@ -36,4 +54,10 @@ async fn can_run_baby_node() {
     //check that client is connected
     let status = client.health().await.unwrap();
     assert_eq!(status, true);
+}
+
+#[tokio::test]
+async fn can_run_query() {
+    let coins = run_query().await.unwrap();
+    assert_eq!(coins.len(), 1);
 }
